@@ -114,6 +114,7 @@
             border-radius: 4px;
             box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
             transition: transform 0.2s;
+            position: relative; /* För att positionera knapparna */
         }
 
         .project-card:hover {
@@ -133,15 +134,28 @@
             margin-bottom: 5px;
         }
         
-        /* Knapp för Redigering */
+        /* Knapparna i korten */
+        .card-actions {
+            margin-top: 15px;
+            display: flex;
+            justify-content: flex-end; /* Flyttar knapparna till höger */
+            gap: 10px;
+        }
+        
         .edit-btn {
-            float: right;
-            background-color: #ffc107; /* Gul */
+            background-color: #ffc107; /* Gul (Redigera) */
             color: #333;
-            margin-top: 10px;
         }
         .edit-btn:hover {
             background-color: #e0a800;
+        }
+        
+        .delete-btn {
+            background-color: #dc3545; /* Röd (Ta bort) */
+            color: white;
+        }
+        .delete-btn:hover {
+            background-color: #c82333;
         }
         
         /* Flexibel layout för formulärknappen */
@@ -221,4 +235,241 @@
     </div>
 
 
-    <div
+    <div class="container">
+        <h2>Projektresultat</h2>
+        <div id="results">
+            </div>
+    </div>
+
+    <script>
+        // =========================================================
+        // 1. Initialisering, Data och Lagring (LocalStorage)
+        // =========================================================
+
+        let editingProjectId = null;
+
+        function loadProjects() {
+            const storedProjects = localStorage.getItem('nckProjects');
+            if (storedProjects) {
+                return JSON.parse(storedProjects);
+            }
+            
+            // Tom startdata (ingen standardlista med projekt)
+            return [];
+        }
+
+        let projects = loadProjects();
+
+        function saveProjects() {
+            localStorage.setItem('nckProjects', JSON.stringify(projects));
+            applyFilters(); 
+        }
+
+
+        // =========================================================
+        // 2. Lägg till/Uppdatera/Ta Bort Funktioner
+        // =========================================================
+
+        function addProject() {
+            const titel = document.getElementById('titel').value.trim();
+            const status = document.getElementById('status').value.trim();
+            const datum = document.getElementById('datum').value.trim();
+            const deltagare = document.getElementById('deltagare').value.trim();
+            const beskrivning = document.getElementById('beskrivning').value.trim();
+            
+            if (!titel || !status || !datum) {
+                alert("Titel, Status och Datum måste fyllas i.");
+                return;
+            }
+
+            if (editingProjectId) {
+                // UPPFATERA BEFINTLIGT PROJEKT
+                const projectIndex = projects.findIndex(p => p.id === editingProjectId);
+                if (projectIndex !== -1) {
+                    projects[projectIndex] = {
+                        id: editingProjectId,
+                        titel,
+                        status,
+                        datum,
+                        deltagare,
+                        beskrivning
+                    };
+                }
+                editingProjectId = null;
+                document.querySelector('#addProjectForm button').textContent = 'Lägg till projekt';
+            } else {
+                // LÄGG TILL NYTT PROJEKT
+                const newProject = {
+                    id: 'p' + Date.now(), 
+                    titel,
+                    status,
+                    datum,
+                    deltagare,
+                    beskrivning
+                };
+                projects.push(newProject);
+            }
+
+            document.getElementById('addProjectForm').reset();
+            saveProjects(); 
+            populateYearFilter();
+        }
+
+        // Sätter igång redigeringsläget
+        function editProject(projectId) {
+            const projectToEdit = projects.find(p => p.id === projectId);
+            
+            if (projectToEdit) {
+                document.getElementById('titel').value = projectToEdit.titel;
+                document.getElementById('status').value = projectToEdit.status;
+                document.getElementById('datum').value = projectToEdit.datum;
+                document.getElementById('deltagare').value = projectToEdit.deltagare;
+                document.getElementById('beskrivning').value = projectToEdit.beskrivning;
+
+                editingProjectId = projectId;
+                document.querySelector('#addProjectForm button').textContent = 'Spara ändringar';
+                document.getElementById('addProjectForm').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+        
+        // Tar bort ett projekt permanent
+        function deleteProject(projectId) {
+            if (confirm("Är du säker på att du vill ta bort detta projekt permanent?")) {
+                projects = projects.filter(p => p.id !== projectId);
+                saveProjects();
+                populateYearFilter();
+            }
+        }
+
+
+        // =========================================================
+        // 3. Filter och Visning
+        // =========================================================
+
+        function populateYearFilter() {
+            const yearFilter = document.getElementById('yearFilter');
+            yearFilter.innerHTML = '<option value="">Alla år</option>'; 
+            
+            const currentYear = new Date().getFullYear();
+            const futureLimit = currentYear + 10;
+            const years = new Set();
+            
+            projects.forEach(project => {
+                if (project.datum) {
+                    const parts = project.datum.split('-').map(y => y.trim()).filter(y => y !== '');
+                    
+                    if (parts.length === 1) {
+                        years.add(parseInt(parts[0]));
+                    } else if (parts.length === 2) {
+                        const start = parseInt(parts[0]);
+                        const end = parseInt(parts[1]) || futureLimit; 
+                        
+                        if (!isNaN(start) && !isNaN(end)) {
+                            const maxEnd = Math.min(end, futureLimit); 
+                            for (let year = start; year <= maxEnd; year++) {
+                                years.add(year);
+                            }
+                        }
+                    } else {
+                        const yearMatches = project.datum.match(/\b\d{4}\b/g);
+                        if (yearMatches) {
+                            yearMatches.forEach(y => years.add(parseInt(y)));
+                        }
+                    }
+                }
+            });
+
+            const sortedYears = Array.from(years)
+                .filter(y => !isNaN(y))
+                .sort((a, b) => b - a); 
+            
+            sortedYears.forEach(year => {
+                const option = document.createElement('option');
+                option.value = year.toString();
+                option.textContent = year.toString();
+                yearFilter.appendChild(option);
+            });
+        }
+
+        function applyFilters() {
+            const statusFilter = document.getElementById('statusFilter').value.toLowerCase();
+            const yearFilter = document.getElementById('yearFilter').value;
+            const searchQuery = document.getElementById('searchQuery').value.toLowerCase().trim();
+
+            let filteredProjects = projects.filter(project => {
+                // 1. Statusfilter
+                const statusMatch = !statusFilter || project.status.toLowerCase() === statusFilter;
+
+                // 2. År-filter
+                const yearMatch = !yearFilter || (
+                    project.datum && project.datum.split('-').length >= 1 && (
+                        (project.datum.includes(yearFilter)) || 
+                        (
+                            project.datum.split('-').length >= 2 && 
+                            parseInt(yearFilter) >= parseInt(project.datum.split('-')[0].trim()) && 
+                            (project.datum.split('-')[1].trim() === '' || parseInt(yearFilter) <= parseInt(project.datum.split('-')[1].trim()))
+                        )
+                    )
+                );
+
+                // 3. Fritextsökning
+                const searchMatch = !searchQuery || 
+                    project.titel.toLowerCase().includes(searchQuery) ||
+                    project.beskrivning.toLowerCase().includes(searchQuery) ||
+                    project.deltagare.toLowerCase().includes(searchQuery);
+
+                return statusMatch && yearMatch && searchMatch;
+            });
+
+            displayProjects(filteredProjects);
+        }
+
+        // Visar projekten i DOM
+        function displayProjects(projectsToDisplay) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+
+            if (projectsToDisplay.length === 0) {
+                resultsDiv.innerHTML = '<p>Inga projekt matchar dina filter och sökning. Lägg till ditt första projekt ovan!</p>';
+                return;
+            }
+
+            projectsToDisplay.forEach(project => {
+                const projectDiv = document.createElement('div');
+                projectDiv.className = 'project-card';
+                projectDiv.innerHTML = `
+                    <h3>${project.titel}</h3>
+                    <p><strong>Status:</strong> ${project.status}</p>
+                    <p><strong>Datum:</strong> ${project.datum}</p>
+                    <p><strong>Deltagare:</strong> ${project.deltagare || 'Ej specificerat'}</p>
+                    <p>${project.beskrivning || ''}</p>
+                    
+                    <div class="card-actions">
+                        <button onclick="editProject('${project.id}')" class="edit-btn">Redigera</button>
+                        <button onclick="deleteProject('${project.id}')" class="delete-btn">Ta bort</button>
+                    </div>
+                `;
+                resultsDiv.appendChild(projectDiv);
+            });
+        }
+
+
+        // =========================================================
+        // 4. Starta applikationen
+        // =========================================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            populateYearFilter(); 
+            applyFilters(); 
+            
+            document.getElementById('searchQuery').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    applyFilters();
+                }
+            });
+        });
+
+    </script>
+
+</body>
+</html>
