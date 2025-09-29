@@ -5,982 +5,220 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NCK Forskningsöversikt</title>
     <style>
+        /* Globala stilar */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-            background: #f5f5f5;
-            padding: 20px;
+            font-family: Arial, sans-serif;
             line-height: 1.6;
+            padding: 20px;
+            background-color: #f4f4f4;
+            color: #333;
         }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-        
-        header {
-            background: #333;
-            color: white;
-            padding: 30px;
-        }
-        
+
         h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-        
-        .subtitle {
-            opacity: 0.9;
-            font-size: 14px;
-        }
-        
-        .top-actions {
-            padding: 20px 30px;
-            background: #f9f9f9;
-            border-bottom: 2px solid #ddd;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .btn {
-            padding: 10px 20px;
-            border: 2px solid #333;
-            background: white;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .btn:hover {
-            background: #333;
-            color: white;
-        }
-        
-        .btn-primary {
-            background: #333;
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: #555;
-            border-color: #555;
-        }
-        
-        .filters {
-            padding: 25px 30px;
-            background: #fafafa;
-            border-bottom: 2px solid #e0e0e0;
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        
-        .search-box {
-            flex: 1;
-            min-width: 250px;
-        }
-        
-        .search-box input {
-            width: 100%;
-            padding: 10px 15px;
-            border: 2px solid #333;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-        
-        .filter-group {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        
-        .filter-group label {
-            font-size: 14px;
-            font-weight: 600;
-            color: #333;
-        }
-        
-        .filter-group select {
-            padding: 8px 12px;
-            border: 2px solid #333;
-            border-radius: 6px;
-            font-size: 14px;
-            background: white;
-            font-weight: 500;
-        }
-        
-        .stats {
-            padding: 20px 30px;
-            display: flex;
-            gap: 20px;
-            background: #f9f9f9;
-            border-bottom: 2px solid #e0e0e0;
-        }
-        
-        .stat-card {
-            flex: 1;
-            padding: 15px;
-            background: white;
-            border-radius: 8px;
-            border: 2px solid #333;
-        }
-        
-        .stat-number {
-            font-size: 32px;
-            font-weight: bold;
-            color: #333;
-        }
-        
-        .stat-label {
-            font-size: 13px;
-            color: #666;
-            margin-top: 5px;
-            font-weight: 600;
-        }
-        
-        .projects {
-            padding: 30px;
-        }
-        
-        .project-card {
-            background: white;
-            border: 2px solid #333;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 15px;
-            transition: all 0.2s;
-        }
-        
-        .project-card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-        
-        .project-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #eee;
-        }
-        
-        .project-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #333;
-            flex: 1;
-        }
-        
-        .status-badge {
-            padding: 6px 14px;
-            border: 2px solid #333;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 700;
-            white-space: nowrap;
-            margin-left: 15px;
-            background: white;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .project-meta {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 12px;
-            font-size: 14px;
-            color: #555;
-        }
-        
-        .meta-item {
-            display: flex;
-            gap: 8px;
-        }
-        
-        .meta-label {
-            font-weight: 700;
-            color: #333;
-            min-width: 110px;
-        }
-        
-        .meta-value {
-            flex: 1;
-        }
-        
-        .no-results {
             text-align: center;
-            padding: 60px 20px;
-            color: #999;
+            margin-bottom: 30px;
+            color: #004d99; /* Mörkblå för rubrik */
         }
-        
-        .no-results-icon {
-            font-size: 48px;
-            margin-bottom: 15px;
-        }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.7);
-            z-index: 1000;
+
+        /* Filter- och Form-containers */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #fff;
             padding: 20px;
-            overflow-y: auto;
-        }
-        
-        .modal.active {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .modal-content {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            max-width: 700px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            border: 3px solid #333;
-        }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #333;
-        }
-        
-        .modal-title {
-            font-size: 24px;
-            font-weight: 700;
-        }
-        
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 28px;
-            cursor: pointer;
-            color: #333;
-            font-weight: bold;
-            padding: 0;
-            width: 30px;
-            height: 30px;
-            line-height: 1;
-        }
-        
-        .form-group {
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
         }
-        
-        .form-group label {
-            display: block;
-            font-weight: 700;
-            margin-bottom: 8px;
-            color: #333;
+
+        #filters, #addProjectForm {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
         }
-        
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        input[type="text"], select, textarea {
             width: 100%;
             padding: 10px;
-            border: 2px solid #333;
-            border-radius: 6px;
-            font-size: 14px;
-            font-family: inherit;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
         }
-        
-        .form-group textarea {
-            min-height: 80px;
+
+        textarea {
+            grid-column: 1 / -1; /* Gör så att textarea tar upp hela bredden */
+            min-height: 100px;
             resize: vertical;
         }
-        
-        .form-actions {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-            margin-top: 25px;
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Knapp för att lägga till/spara projekt */
+        #addProjectForm button {
+            background-color: #007bff; /* Blå */
+            color: white;
+        }
+
+        #addProjectForm button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Sökknapp */
+        #searchButton {
+            background-color: #28a745; /* Grön */
+            color: white;
+            grid-column: auto;
+        }
+
+        #searchButton:hover {
+            background-color: #1e7e34;
+        }
+
+        /* Resultatlistan */
+        #results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
             padding-top: 20px;
-            border-top: 2px solid #eee;
+        }
+
+        .project-card {
+            background: #f9f9f9;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-left: 5px solid #004d99; /* Blå kantmarkering */
+            border-radius: 4px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s;
+        }
+
+        .project-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .project-card h3 {
+            margin-top: 0;
+            color: #004d99;
+            border-bottom: 1px dotted #ccc;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+
+        .project-card p {
+            margin-bottom: 5px;
         }
         
-        @media (max-width: 768px) {
-            .filters {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .stats {
-                flex-direction: column;
-            }
-            
-            .project-header {
-                flex-direction: column;
-            }
-            
-            .status-badge {
-                margin-left: 0;
-                margin-top: 10px;
-                align-self: flex-start;
-            }
-            
-            .top-actions {
-                flex-direction: column;
-                gap: 10px;
-                align-items: stretch;
-            }
+        /* Knapp för Redigering */
+        .edit-btn {
+            float: right;
+            background-color: #ffc107; /* Gul */
+            color: #333;
+            margin-top: 10px;
+        }
+        .edit-btn:hover {
+            background-color: #e0a800;
+        }
+        
+        /* Flexibel layout för formulärknappen */
+        #addProjectForm > div {
+            display: flex;
+            align-items: flex-end; /* Knappen alignas i botten */
+        }
+        #addProjectForm button {
+            width: 100%;
         }
     </style>
 </head>
 <body>
+
+    <h1>NCK Forskningsöversikt</h1>
+
     <div class="container">
-        <header>
-            <h1>NCK Forskningsöversikt</h1>
-            <div class="subtitle">Alla forskningsprojekt på ett ställe – enkelt att söka, filtrera och uppdatera</div>
-        </header>
-        
-        <div class="top-actions">
-            <div style="font-size: 14px; color: #666; font-weight: 600;">
-                Tillgänglig design utan färgkodning
+        <h2>Lägg till / Redigera Projekt</h2>
+        <form id="addProjectForm" onsubmit="event.preventDefault(); addProject();">
+            <div>
+                <label for="titel">Titel:</label>
+                <input type="text" id="titel" required>
             </div>
-            <button class="btn btn-primary" onclick="openAddModal()">+ Lägg till nytt projekt</button>
-        </div>
-        
-        <div class="filters">
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="🔍 Sök på projektnamn, projektledare, finansiering...">
-            </div>
-            <div class="filter-group">
-                <label for="statusFilter">Status:</label>
-                <select id="statusFilter">
-                    <option value="">Alla</option>
-                    <option value="Pågående">Pågående</option>
+            <div>
+                <label for="status">Status:</label>
+                <select id="status" required>
                     <option value="Planerad">Planerad</option>
-                    <option value="Ansökan">Ansökan</option>
+                    <option value="Pågående">Pågående</option>
                     <option value="Avslutad">Avslutad</option>
                 </select>
             </div>
-            <div class="filter-group">
-                <label for="yearFilter">År:</label>
-                <select id="yearFilter">
-                    <option value="">Alla år</option>
+            <div>
+                <label for="datum">Datumintervall (YYYY-YYYY eller YYYY-):</label>
+                <input type="text" id="datum" placeholder="t.ex. 2024-2025" required>
+            </div>
+            <div>
+                <label for="deltagare">Deltagare (kommaseparerat):</label>
+                <input type="text" id="deltagare" placeholder="t.ex. Anna, Pelle">
+            </div>
+            <div style="grid-column: 1 / -1;">
+                <label for="beskrivning">Beskrivning:</label>
+                <textarea id="beskrivning"></textarea>
+            </div>
+            <div>
+                <button type="submit">Lägg till projekt</button>
+            </div>
+        </form>
+    </div>
+
+
+    <div class="container">
+        <h2>Filter & Sök</h2>
+        <div id="filters">
+            <div>
+                <label for="statusFilter">Status:</label>
+                <select id="statusFilter" onchange="applyFilters()">
+                    <option value="">Alla statusar</option>
+                    <option value="Planerad">Planerad</option>
+                    <option value="Pågående">Pågående</option>
+                    <option value="Avslutad">Avslutad</option>
                 </select>
             </div>
-        </div>
-        
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-number" id="statPågående">0</div>
-                <div class="stat-label">PÅGÅENDE PROJEKT</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="statPlanerad">0</div>
-                <div class="stat-label">PLANERADE PROJEKT</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="statAnsökan">0</div>
-                <div class="stat-label">PÅGÅENDE ANSÖKNINGAR</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="statTotal">0</div>
-                <div class="stat-label">TOTALT ANTAL PROJEKT</div>
-            </div>
-        </div>
-        
-        <div class="projects" id="projectsList"></div>
-    </div>
-
-    <div class="modal" id="addModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Lägg till nytt projekt</h2>
-                <button class="close-btn" onclick="closeAddModal()">&times;</button>
-            </div>
-            <form id="addProjectForm" onsubmit="addProject(event)">
-                <div class="form-group">
-                    <label for="newNamn">Projektnamn *</label>
-                    <input type="text" id="newNamn" required>
-                </div>
-                <div class="form-group">
-                    <label for="newStatus">Status *</label>
-                    <select id="newStatus" required>
-                        <option value="Pågående">Pågående</option>
-                        <option value="Planerad">Planerad</option>
-                        <option value="Ansökan">Ansökan</option>
-                        <option value="Avslutad">Avslutad</option>
+            <div>
+                <label for="yearFilter">År:</label>
+                <select id="yearFilter" onchange="applyFilters()">
+                    <option value="">Alla år</option>
                     </select>
-                </div>
-                <div class="form-group">
-                    <label for="newDatum">Start- och slutdatum</label>
-                    <input type="text" id="newDatum" placeholder="t.ex. 2024-2026">
-                </div>
-                <div class="form-group">
-                    <label for="newProjektledare">Projektledare</label>
-                    <input type="text" id="newProjektledare">
-                </div>
-                <div class="form-group">
-                    <label for="newMedarbetare">Projektmedarbetare</label>
-                    <input type="text" id="newMedarbetare">
-                </div>
-                <div class="form-group">
-                    <label for="newSyfte">Syfte/frågeställningar</label>
-                    <textarea id="newSyfte"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="newAnknytning">Internationell anknytning</label>
-                    <input type="text" id="newAnknytning">
-                </div>
-                <div class="form-group">
-                    <label for="newFinansiering">Finansiering</label>
-                    <input type="text" id="newFinansiering">
-                </div>
-                <div class="form-group">
-                    <label for="newEtik">Etikgodkännande</label>
-                    <select id="newEtik">
-                        <option value="">Välj...</option>
-                        <option value="Ja">Ja</option>
-                        <option value="Ja, behövs">Ja, behövs</option>
-                        <option value="Nej">Nej</option>
-                        <option value="Måste undersökas">Måste undersökas</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="newDatalagring">Datalagring</label>
-                    <input type="text" id="newDatalagring">
-                </div>
-                <div class="form-group">
-                    <label for="newPublikationer">Publikationer/resultat</label>
-                    <textarea id="newPublikationer"></textarea>
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn" onclick="closeAddModal()">Avbryt</button>
-                    <button type="submit" class="btn btn-primary">Spara projekt</button>
-                </div>
-            </form>
+            </div>
+            <div>
+                <label for="searchQuery">Fritextsökning:</label>
+                <input type="text" id="searchQuery" placeholder="Titel, deltagare, beskrivning...">
+            </div>
+            <div>
+                <button id="searchButton" onclick="applyFilters()">Sök</button>
+            </div>
         </div>
     </div>
 
-    <script>
-        let projects = [
-            {
-                namn: "Eftervåld och hälsa",
-                datum: "2022-2025",
-                projektledare: "Sara Skoog Waller",
-                medarbetare: "",
-                syfte: "Kartlägga och undersöka utsatthet för eftervåld bland kvinnor som utsatts för våld i en tidigare relation.",
-                finansiering: "NCK",
-                etik: "Ja",
-                datalagring: "Uppsala universitet",
-                publikationer: "",
-                status: "Pågående",
-                anknytning: ""
-            },
-            {
-                namn: "Teknologins roll i våld i nära relationer",
-                datum: "2024-",
-                projektledare: "Nicole Ovesen",
-                medarbetare: "",
-                syfte: "Undersöka dynamikerna för teknologibaserat våld, hur det kommer till uttryck i de våldsutsattas liv samt vilka vardagliga konsekvenser teknologin spelar för våldsutsatta kvinnor både under och efter relationens slut.",
-                finansiering: "Etableringsbidrag från Forte, NCK",
-                etik: "Ja",
-                datalagring: "Uppsala universitet. Använder Allvis, UPPMAX, Vesta.",
-                publikationer: "",
-                status: "Pågående",
-                anknytning: ""
-            },
-            {
-                namn: "En egen plats - stadigvarande boende för våldsutsatta",
-                datum: "2024-2026",
-                projektledare: "Sara Skoog Waller",
-                medarbetare: "Ola Nordhall (HiG), Igor Knez (HiG), Candice Ståhl (HiG/ORU) och Alva Blomkvist (forskningsassistent)",
-                syfte: "Projektet undersöker våldsutsatta kvinnors väg till stadigvarande boende och dess påverkan på deras identitet, hälsa och livskvalitet. Målet är att förbättra kommuners arbete och riktlinjer för att säkra dessa kvinnors boende.",
-                finansiering: "Etableringsbidrag från Forte, Länsstyrelsen Gävleborg",
-                etik: "Ja",
-                datalagring: "Uppsala universitet. Använder Allvis, UPPMAX. OneDrive för rapportskrivning.",
-                publikationer: "Rapport (publiceras sommaren 2025)",
-                status: "Pågående",
-                anknytning: ""
-            },
-            {
-                namn: "VIPROM - Victim Protection in Medicine",
-                datum: "2023-2026",
-                projektledare: "Bettina Pfleiderer",
-                medarbetare: "Ulla Albért, Susanne Mattsson och Hadil Zainal Kamil",
-                syfte: "Utbildning- och forskningsprojekt som syftar till att utveckla och implementera målgruppsspecifika utbildningar i våld i nära relation",
-                finansiering: "EU-medel",
-                etik: "",
-                datalagring: "",
-                publikationer: "",
-                status: "Pågående",
-                anknytning: "EU-samarbete mellan Sverige, Grekland, Italien, Österrike och Tyskland"
-            },
-            {
-                namn: "Mäns utsatthet för våld i nära relationer, hjälpsökande och stödbehov",
-                datum: "2024-2025",
-                projektledare: "Maja Bodin",
-                medarbetare: "",
-                syfte: "Öka kunskapen om mäns våldsutsatthet i nära relationer genom att studera hur våldet tar sig uttryck samt mäns hjälpsökande beteende och behov av stöd från myndigheter och andra organisationer.",
-                finansiering: "JÄMY (Regeringsuppdrag)",
-                etik: "Ja",
-                datalagring: "",
-                publikationer: "",
-                status: "Pågående",
-                anknytning: ""
-            },
-            {
-                namn: "HBTQI-personers hjälpsökande och stödbehov",
-                datum: "2023-2025",
-                projektledare: "Nicole Ovesen",
-                medarbetare: "Renita Sörensdotter",
-                syfte: "Syftet med forsknings-och kunskapsöversikten är att sammanställa och analysera den forskning och kunskap som finns om hjälpsökande och stödinsatser avseende gruppen hbtqi-personer som utsatts för våld i nära relationer",
-                finansiering: "JÄMY/Socialstyrelsen (Regeringsuppdrag), NCK",
-                etik: "",
-                datalagring: "",
-                publikationer: "Rapporten",
-                status: "Pågående",
-                anknytning: ""
-            },
-            {
-                namn: "Våldsutsatthet och screening för livmoderhalscancer",
-                datum: "2024-2032",
-                projektledare: "Shirin Ziaei",
-                medarbetare: "Johanna Belachew, Linette Backeman (UU), Lena Liljeström (UU) och Malin Jordal (HiG)",
-                syfte: "Forskningsstudie som undersöker orsakerna som kan ligga bakom att man eventuellt inte lämnar sin cellprov",
-                finansiering: "NCK, ALF-medel",
-                etik: "Ja",
-                datalagring: "",
-                publikationer: "",
-                status: "Pågående",
-                anknytning: ""
-            },
-            {
-                namn: "Forsknings- och kunskapsöversikt – om digitala dimensioner av våld i nära relationer",
-                datum: "2024-2025",
-                projektledare: "Sara Jakobsson",
-                medarbetare: "Carolina Överlien och Alva Blomkvist (forskningsassistent)",
-                syfte: "Syftet med översikten är att få en samlad bild av kunskapsläget gällande teknikens roll i partnervåld och hjälpsökande, vilka strategier och policys som finns på den nationella och internationella arenan som är relevanta för Sverige",
-                finansiering: "JÄMY (Regeringsuppdrag)",
-                etik: "Nej",
-                datalagring: "Uppsala universitet. Lagrar artiklar och relevanta dokument i gemensamma arbetsytor i OneDrive och Argos.",
-                publikationer: "Planerad rapport färdigställs oktober 2025.",
-                status: "Pågående",
-                anknytning: ""
-            },
-            {
-                namn: "Digitala stödinsatser: Innovativa sätt att ge stöd till unga via Snapchat",
-                datum: "2024-2026",
-                projektledare: "Sara Jakobsson",
-                medarbetare: "Carolina Överlien, Nicole Ovesen, Sibel Korkmaz (SU) och Alva Blomkvist (forskningsassistent)",
-                syfte: "Följeforskning om hur en verksamhet ger stöd via applikationen Snapchat. NCK kommer samla in och analysera chattloggar och statistik (ev. intervjuer) för att förhoppningsvis besvara frågeställningar kring innovativa sätt att ge stöd till våldsutsatta",
-                finansiering: "Regeringskansliet/-JÄMY. Pågående ansökan till Allmänna Barnhuset",
-                etik: "Ja",
-                datalagring: "Uppsala universitet. Kommer lagra data i Allvis.",
-                publikationer: "",
-                status: "Pågående",
-                anknytning: ""
-            },
-            {
-                namn: "Forsknings- och kunskapsöversikt - om sexuella trakasserier och systematiskt arbetsmiljöarbete",
-                datum: "2023-2025",
-                projektledare: "Anne-Charlotte Callerstig",
-                medarbetare: "Anneli Häyrén",
-                syfte: "Varför kommer vi inte åt problemet med sexuella trakasserier när det finns så många etablerade metoder och varför fungerar inte det systematiska arbetsmiljöarbetet som förebyggandeåtgärd",
-                finansiering: "Mynak",
-                etik: "",
-                datalagring: "",
-                publikationer: "Rapport under ht 25",
-                status: "Pågående",
-                anknytning: ""
-            },
-            {
-                namn: "Forsknings- och kunskapsöversikt - om hot och våld från tredje person/man med fokus på vård, skola och omsorg",
-                datum: "2025",
-                projektledare: "Anneli Häyrén",
-                medarbetare: "Anne-Sofie Nyström",
-                syfte: "Hur ser prevalensen ut? Hur ser våldet ut? Hur kopplas det till systematiskt arbetsmiljöarbete?",
-                finansiering: "Mynak",
-                etik: "",
-                datalagring: "",
-                publikationer: "25-Dec",
-                status: "Pågående",
-                anknytning: ""
-            },
-            {
-                namn: "Hedersrelaterat våld och förtryck i Norden",
-                datum: "2024-2025",
-                projektledare: "NIKK, Nordisk information för kunskap om kön",
-                medarbetare: "Alexandra Lebedeva",
-                syfte: "Att ge en överblick av arbetet i norden genom att belysa hur begreppet hedersrelaterat våld och förtyck definieras, vilka problem och utmaningar som identifieras och hur arbetet med att möta dessa utmaningar är organiserat",
-                finansiering: "Nordiska ministerrådet",
-                etik: "Nej",
-                datalagring: "",
-                publikationer: "",
-                status: "Pågående",
-                anknytning: ""
-            },
-            {
-                namn: "EMBER- Empowerment and Resilience-Based Recovery",
-                datum: "2025-2029",
-                projektledare: "Carolina Överlien",
-                medarbetare: "Tove Filén, Johanna Belachew, Martin Cernvall",
-                syfte: "Utvärdering av den resiliensbaserade metod som används kliniskt på Kvinnofridsmottagningen. Dessutom normering av ett skamformulär, EISS.",
-                finansiering: "NCK",
-                etik: "Ja",
-                datalagring: "",
-                publikationer: "",
-                status: "Pågående",
-                anknytning: ""
-            },
-            {
-                namn: "Befolkningsundersökningen våld och hälsa",
-                datum: "2025-2028",
-                projektledare: "Marcus Lindskog",
-                medarbetare: "Everett Christensen, Sara Skoog Waller, Sara Jakobsson, Annika Töyrä, Carolina Överlien mfl",
-                syfte: "Riksrepresentativ befolkningsstudie som på nationell nivå som ska studera utsatthet för våld hos befolkningen",
-                finansiering: "Regeringskansliet/-Arbetsmarknadsdepartementet",
-                etik: "Ja, behövs",
-                datalagring: "Uppsala universitet",
-                publikationer: "",
-                status: "Planerad",
-                anknytning: ""
-            },
-            {
-                namn: "NCK's stödlinjer",
-                datum: "2025-2029",
-                projektledare: "Marcus Lindskog",
-                medarbetare: "Johanna Belachew, Maja Bodin, Etta Meyer Qvarnström",
-                syfte: "",
-                finansiering: "NCK",
-                etik: "",
-                datalagring: "",
-                publikationer: "",
-                status: "Planerad",
-                anknytning: ""
-            },
-            {
-                namn: "Stöd till våldsutsatta unga (ungarelationer.se)",
-                datum: "2025-2029",
-                projektledare: "Carolina Överlien",
-                medarbetare: "Mirjam Nathansson",
-                syfte: "",
-                finansiering: "NCK, JÄMY",
-                etik: "",
-                datalagring: "",
-                publikationer: "",
-                status: "Planerad",
-                anknytning: ""
-            },
-            {
-                namn: "Våldsförebyggande arbete genom utbildning om sexuella trakasserier",
-                datum: "2026",
-                projektledare: "Fredrik Alenius",
-                medarbetare: "Anneli Häyrén, Maria Hyllebgren, Emma Von Sydow",
-                syfte: "Vilka effekter får utbildning om sexuella trakasserier kopplat till förståelse om våld, på våld i andra kontexter än arbete",
-                finansiering: "Söker från AFA",
-                etik: "Ja, behövs",
-                datalagring: "",
-                publikationer: "",
-                status: "Ansökan",
-                anknytning: ""
-            },
-            {
-                namn: "NCK 2.0",
-                datum: "2026",
-                projektledare: "Anneli Häyrén",
-                medarbetare: "Annie Woube, Jill Trenholm samt MIRakademin",
-                syfte: "Hur kan vi starta och bygga upp en verksamhet som NCK utomlands? Vilka forskningsfördelar och utbyte kan det generera?",
-                finansiering: "Daphne",
-                etik: "Måste undersökas",
-                datalagring: "",
-                publikationer: "",
-                status: "Ansökan",
-                anknytning: "Partner i Aten och Vynitsa (Ukraina)"
-            },
-            {
-                namn: "SUN",
-                datum: "2025",
-                projektledare: "Anneli Häyrén",
-                medarbetare: "Jill Trenholm, Hanna Palhamn Szabo",
-                syfte: "Nätverksbyggande för forsknings- och utbildningssamarbete om våld i nära relaioner",
-                finansiering: "SI",
-                etik: "Nej",
-                datalagring: "",
-                publikationer: "",
-                status: "Ansökan",
-                anknytning: "Ska byggas i Kyiv, Ukraina"
-            },
-            {
-                namn: "Reproduktivt tvång (postdok)",
-                datum: "2025",
-                projektledare: "Maja Bodin",
-                medarbetare: "",
-                syfte: "",
-                finansiering: "Vetenskapsrådet",
-                etik: "",
-                datalagring: "",
-                publikationer: "",
-                status: "Ansökan",
-                anknytning: ""
-            }
-        ];
 
-        let filteredProjects = [...projects];
-
-        // Funktioner för Modal (Lägg till projekt)
-        function openAddModal() {
-            document.getElementById('addModal').classList.add('active');
-        }
-
-        function closeAddModal() {
-            document.getElementById('addModal').classList.remove('active');
-            document.getElementById('addProjectForm').reset(); // Rensa formuläret
-        }
-
-        // Funktion för att uppdatera statistik
-        function updateStats() {
-            const counts = {
-                'Pågående': 0,
-                'Planerad': 0,
-                'Ansökan': 0,
-                'Avslutad': 0,
-            };
-
-            projects.forEach(project => {
-                if (counts[project.status] !== undefined) {
-                    counts[project.status]++;
-                }
-            });
-
-            document.getElementById('statPågående').textContent = counts['Pågående'];
-            document.getElementById('statPlanerad').textContent = counts['Planerad'];
-            document.getElementById('statAnsökan').textContent = counts['Ansökan'];
-            document.getElementById('statTotal').textContent = projects.length;
-        }
-
-        // Funktion för att rendera projektkorten
-        function renderProjects(projectsToRender) {
-            const projectsList = document.getElementById('projectsList');
-            projectsList.innerHTML = ''; // Rensa befintliga projekt
-
-            if (projectsToRender.length === 0) {
-                projectsList.innerHTML = `
-                    <div class="no-results">
-                        <div class="no-results-icon">😔</div>
-                        <h2>Inga projekt hittades</h2>
-                        <p>Försök med en annan sökterm eller justera filtren.</p>
-                    </div>
-                `;
-                return;
-            }
-
-            projectsToRender.forEach(project => {
-                const card = document.createElement('div');
-                card.classList.add('project-card');
-
-                card.innerHTML = `
-                    <div class="project-header">
-                        <div class="project-title">${project.namn}</div>
-                        <span class="status-badge">${project.status}</span>
-                    </div>
-                    <div class="project-meta">
-                        <div class="meta-item">
-                            <span class="meta-label">Tidsperiod:</span>
-                            <span class="meta-value">${project.datum || 'Ej angivet'}</span>
-                        </div>
-                        <div class="meta-item">
-                            <span class="meta-label">Projektledare:</span>
-                            <span class="meta-value">${project.projektledare || 'Ej angivet'}</span>
-                        </div>
-                        <div class="meta-item">
-                            <span class="meta-label">Medarbetare:</span>
-                            <span class="meta-value">${project.medarbetare || 'Ej angivet'}</span>
-                        </div>
-                        <div class="meta-item">
-                            <span class="meta-label">Finansiering:</span>
-                            <span class="meta-value">${project.finansiering || 'Ej angivet'}</span>
-                        </div>
-                        <div class="meta-item">
-                            <span class="meta-label">Etikgodkännande:</span>
-                            <span class="meta-value">${project.etik || 'Ej angivet'}</span>
-                        </div>
-                        <div class="meta-item">
-                            <span class="meta-label">Datalagring:</span>
-                            <span class="meta-value">${project.datalagring || 'Ej angivet'}</span>
-                        </div>
-                        <div class="meta-item" style="grid-column: 1 / -1;">
-                            <span class="meta-label">Syfte:</span>
-                            <span class="meta-value">${project.syfte || 'Ej angivet'}</span>
-                        </div>
-                        ${project.anknytning ? `
-                        <div class="meta-item" style="grid-column: 1 / -1;">
-                            <span class="meta-label">Internationell anknytning:</span>
-                            <span class="meta-value">${project.anknytning}</span>
-                        </div>
-                        ` : ''}
-                        <div class="meta-item" style="grid-column: 1 / -1;">
-                            <span class="meta-label">Publikationer/Resultat:</span>
-                            <span class="meta-value">${project.publikationer || 'Ej angivet'}</span>
-                        </div>
-                    </div>
-                `;
-                projectsList.appendChild(card);
-            });
-        }
-
-        // Funktion för sökning och filtrering
-        function filterProjects() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const statusFilter = document.getElementById('statusFilter').value;
-            const yearFilter = document.getElementById('yearFilter').value;
-            
-            filteredProjects = projects.filter(project => {
-                // Sökfilter
-                const searchMatch = 
-                    project.namn.toLowerCase().includes(searchTerm) ||
-                    project.projektledare.toLowerCase().includes(searchTerm) ||
-                    project.finansiering.toLowerCase().includes(searchTerm) ||
-                    project.medarbetare.toLowerCase().includes(searchTerm) ||
-                    project.syfte.toLowerCase().includes(searchTerm);
-
-                // Statusfilter
-                const statusMatch = statusFilter === "" || project.status === statusFilter;
-
-                // År-filter (letar efter om det valda året finns i datumsträngen)
-                let yearMatch = true;
-                if (yearFilter !== "") {
-                    // Datumsträngen kan vara "2024-2026" eller "2025"
-                    const years = project.datum ? project.datum.split('-').map(y => y.trim()) : [];
-                    
-                    if (years.length === 1) {
-                         // Endast ett år (t.ex. "2025")
-                        yearMatch = years[0] === yearFilter;
-                    } else if (years.length === 2) {
-                        // Period (t.ex. "2024-2026")
-                        const startYear = parseInt(years[0]);
-                        const endYear = parseInt(years[1]);
-                        const targetYear = parseInt(yearFilter);
-
-                        if (!isNaN(startYear) && !isNaN(endYear) && !isNaN(targetYear)) {
-                            yearMatch = targetYear >= startYear && targetYear <= endYear;
-                        } else if (!isNaN(startYear) && isNaN(endYear)) {
-                            // Period som börjar men inte har slut (t.ex. "2024-")
-                            yearMatch = targetYear >= startYear;
-                        } else {
-                            yearMatch = project.datum.includes(yearFilter);
-                        }
-                    } else {
-                        // Annat format, gör en enkel includes-kontroll
-                        yearMatch = project.datum.includes(yearFilter);
-                    }
-                }
-
-                return searchMatch && statusMatch && yearMatch;
-            });
-
-            renderProjects(filteredProjects);
-        }
-
-        // Funktion för att fylla i År-filtret
-        function populateYearFilter() {
-            const yearFilter = document.getElementById('yearFilter');
-            const years = new Set();
-            
-            projects.forEach(project => {
-                if (project.datum) {
-                    // Extrahera alla unika år från datumsträngen, t.ex. "2024-2026" -> [2024, 2025, 2026]
-                    const parts = project.datum.split('-').map(y => y.trim()).filter(y => y !== '');
-                    
-                    if (parts.length === 1) {
-                        years.add(parseInt(parts[0]));
-                    } else if (parts.length === 2) {
-                        const start = parseInt(parts[0]);
-                        const end = parseInt(parts[1]) || new Date().getFullYear() + 5; // Antag 5 år framåt om inget slutår finns
-                        if (!isNaN(start) && !isNaN(end)) {
-                            for (let year = start; year <= end; year++) {
-                                years.add(year);
-                            }
-                        }
-                    } else {
-                        // För säkerhets skull, om formatet är oklart, försök extrahera 4-siffriga år
-                        const yearMatches = project.datum.match(/\b\d{4}\b/g);
-                        if (yearMatches) {
-                            yearMatches.forEach(y => years.add(parseInt(y)));
-                        }
-                    }
-                }
-            });
-
-            const sortedYears = Array.from(years).filter(y => !isNaN(y)).sort((a, b) => b - a);
-            
-            sortedYears.forEach(year => {
-                const option = document.createElement('option');
-                option.value = year.toString();
-                option.textContent = year.toString();
-                yearFilter.appendChild(option);
-            });
-        }
-
-        // Funktion för att lägga till ett nytt projekt
-        function addProject(event) {
-            event.preventDefault(); // Förhindra omladdning av sidan
-
-            const newProject = {
-                namn: document.getElementById('newNamn').value,
-                datum: document.getElementById('newDatum').value,
-                projektledare: document.getElementById('newProjektledare').value,
-                medarbetare: document.getElementById('newMedarbetare').value,
-                syfte: document.getElementById('newSyfte').value,
-                anknytning: document.getElementById('newAnknytning').value,
-                finansiering: document.getElementById('newFinansiering').value,
-                etik: document.getElementById('newEtik').value,
-                datalagring: document.getElementById('newDatalagring').value,
-                publikationer: document.getElementById('newPublikationer').value,
-                status: document.getElementById('newStatus').value,
-            };
-
-            projects.unshift(newProject); // Lägg till i början av listan
-            
-            // Uppdatera allt
-            populateYearFilter(); // Uppdatera år-filter om nytt år lades till
-            updateStats();
-            filterProjects(); 
-            closeAddModal();
-
-            // Meddela användaren
-            alert(`Projektet "${newProject.namn}" har lagts till!`);
-        }
-
-        // Event listeners för sökning och filtrering
-        document.getElementById('searchInput').addEventListener('input', filterProjects);
-        document.getElementById('statusFilter').addEventListener('change', filterProjects);
-        document.getElementById('yearFilter').addEventListener('change', filterProjects);
-
-        // Initiering vid sidans laddning
-        document.addEventListener('DOMContentLoaded', () => {
-            populateYearFilter();
-            updateStats();
-            renderProjects(projects);
-        });
-    </script>
-</body>
-</html>
+    <div
