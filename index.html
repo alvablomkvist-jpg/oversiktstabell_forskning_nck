@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NCK Forskningsöversikt</title>
     <style>
-        /* Globala stilar */
+        /* Globala stilar (Återställd till den snygga versionen) */
         * {
             margin: 0;
             padding: 0;
@@ -23,7 +23,7 @@
         h1 {
             text-align: center;
             margin-bottom: 30px;
-            color: #004d99; /* Mörkblå för rubrik */
+            color: #004d99;
         }
 
         /* Filter- och Form-containers */
@@ -62,7 +62,7 @@
         }
 
         textarea {
-            grid-column: 1 / -1; /* Gör så att textarea tar upp hela bredden */
+            grid-column: 1 / -1;
             min-height: 100px;
             resize: vertical;
         }
@@ -79,7 +79,7 @@
 
         /* Knapp för att lägga till/spara projekt */
         #addProjectForm button {
-            background-color: #007bff; /* Blå */
+            background-color: #007bff;
             color: white;
         }
 
@@ -89,7 +89,7 @@
 
         /* Sökknapp */
         #searchButton {
-            background-color: #28a745; /* Grön */
+            background-color: #28a745;
             color: white;
             grid-column: auto;
         }
@@ -110,11 +110,10 @@
             background: #f9f9f9;
             padding: 20px;
             border: 1px solid #ddd;
-            border-left: 5px solid #004d99; /* Blå kantmarkering */
+            border-left: 5px solid #004d99;
             border-radius: 4px;
             box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
             transition: transform 0.2s;
-            position: relative; /* För att positionera knapparna */
         }
 
         .project-card:hover {
@@ -134,12 +133,12 @@
             margin-bottom: 5px;
         }
         
-        /* Knapparna i korten */
+        /* Knappar i kortet - Återställd enklare placering */
         .card-actions {
-            margin-top: 15px;
             display: flex;
-            justify-content: flex-end; /* Flyttar knapparna till höger */
             gap: 10px;
+            margin-top: 15px;
+            justify-content: flex-end; /* Flyttar knapparna till höger */
         }
         
         .edit-btn {
@@ -161,7 +160,7 @@
         /* Flexibel layout för formulärknappen */
         #addProjectForm > div {
             display: flex;
-            align-items: flex-end; /* Knappen alignas i botten */
+            align-items: flex-end;
         }
         #addProjectForm button {
             width: 100%;
@@ -243,33 +242,99 @@
 
     <script>
         // =========================================================
-        // 1. Initialisering, Data och Lagring (LocalStorage)
+        // 1. Inställningar och Variabler
         // =========================================================
 
         let editingProjectId = null;
+        let projects = []; // Vi startar med tom data, fylls på via API
+        
+        // !!! VIKTIGT: DENNA MÅSTE UPPDATERAS NÄR DU HAR DITT GOOGLE APP SCRIPT URL !!!
+        const API_URL = 'DIN_PUBLISHERADE_GOOGLE_APP_SCRIPT_URL_HÄR';
 
-        function loadProjects() {
-            const storedProjects = localStorage.getItem('nckProjects');
-            if (storedProjects) {
-                return JSON.parse(storedProjects);
+
+        // =========================================================
+        // 2. Datahantering (API-funktioner)
+        // =========================================================
+
+        // Laddar data från Google Sheet (API)
+        async function loadProjects() {
+            try {
+                const response = await fetch(`${API_URL}?action=read`);
+                if (!response.ok) throw new Error('Kunde inte läsa data från datakällan.');
+                
+                const data = await response.json();
+                
+                // Kontrollera om data är en array, annars tom
+                projects = Array.isArray(data) ? data : [];
+                
+                populateYearFilter(); // Uppdatera år-filter
+                applyFilters();       // Visa resultaten
+            } catch (error) {
+                console.error("Fel vid laddning av projekt:", error);
+                document.getElementById('results').innerHTML = '<p>Kunde inte ladda data. Kontrollera API-anslutningen och Google Sheet URL:en.</p>';
             }
-            
-            // Tom startdata (ingen standardlista med projekt)
-            return [];
         }
+        
+        // Skickar data till API:et för att lägga till eller uppdatera
+        async function saveProjectToSheet(projectData, action) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    // Skicka data som URL-kodad sträng
+                    body: new URLSearchParams({ 
+                        action: action, 
+                        data: JSON.stringify(projectData) 
+                    }).toString()
+                });
 
-        let projects = loadProjects();
+                if (!response.ok) throw new Error('API-anropet misslyckades.');
+                
+                // Ladda om alla projekt från Sheet efter en lyckad sparoperation
+                await loadProjects(); 
+                
+            } catch (error) {
+                console.error(`Fel vid ${action} av projekt:`, error);
+                alert(`Kunde inte spara/uppdatera. Kontrollera API-anslutningen. Fel: ${error.message}`);
+            }
+        }
+        
+        // Skickar en begäran till API:et för att ta bort ett projekt
+        async function deleteProjectFromSheet(projectId) {
+            if (!confirm("Är du säker på att du vill ta bort detta projekt permanent?")) {
+                return;
+            }
 
-        function saveProjects() {
-            localStorage.setItem('nckProjects', JSON.stringify(projects));
-            applyFilters(); 
+            try {
+                 const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({ 
+                        action: 'delete', 
+                        id: projectId 
+                    }).toString()
+                });
+                
+                if (!response.ok) throw new Error('API-anropet misslyckades.');
+                
+                // Ladda om data efter borttagning
+                await loadProjects();
+                
+            } catch (error) {
+                console.error("Fel vid borttagning av projekt:", error);
+                alert(`Kunde inte ta bort. Kontrollera API-anslutningen. Fel: ${error.message}`);
+            }
         }
 
 
         // =========================================================
-        // 2. Lägg till/Uppdatera/Ta Bort Funktioner
+        // 3. Formulärlogik
         // =========================================================
-
+        
         function addProject() {
             const titel = document.getElementById('titel').value.trim();
             const status = document.getElementById('status').value.trim();
@@ -282,40 +347,30 @@
                 return;
             }
 
+            const projectData = {
+                titel,
+                status,
+                datum,
+                deltagare,
+                beskrivning
+            };
+
             if (editingProjectId) {
-                // UPPFATERA BEFINTLIGT PROJEKT
-                const projectIndex = projects.findIndex(p => p.id === editingProjectId);
-                if (projectIndex !== -1) {
-                    projects[projectIndex] = {
-                        id: editingProjectId,
-                        titel,
-                        status,
-                        datum,
-                        deltagare,
-                        beskrivning
-                    };
-                }
+                // Uppdatera
+                projectData.id = editingProjectId;
+                saveProjectToSheet(projectData, 'update');
+                
                 editingProjectId = null;
                 document.querySelector('#addProjectForm button').textContent = 'Lägg till projekt';
             } else {
-                // LÄGG TILL NYTT PROJEKT
-                const newProject = {
-                    id: 'p' + Date.now(), 
-                    titel,
-                    status,
-                    datum,
-                    deltagare,
-                    beskrivning
-                };
-                projects.push(newProject);
+                // Lägg till nytt
+                projectData.id = 'p' + Date.now(); // Skapa ett tillfälligt ID
+                saveProjectToSheet(projectData, 'create');
             }
 
             document.getElementById('addProjectForm').reset();
-            saveProjects(); 
-            populateYearFilter();
         }
 
-        // Sätter igång redigeringsläget
         function editProject(projectId) {
             const projectToEdit = projects.find(p => p.id === projectId);
             
@@ -331,22 +386,19 @@
                 document.getElementById('addProjectForm').scrollIntoView({ behavior: 'smooth' });
             }
         }
-        
-        // Tar bort ett projekt permanent
+
         function deleteProject(projectId) {
-            if (confirm("Är du säker på att du vill ta bort detta projekt permanent?")) {
-                projects = projects.filter(p => p.id !== projectId);
-                saveProjects();
-                populateYearFilter();
-            }
+             deleteProjectFromSheet(projectId); // Anropar den nya API-funktionen
         }
 
 
         // =========================================================
-        // 3. Filter och Visning
+        // 4. Filter och Visning
         // =========================================================
 
+        // (Filter- och visningsfunktionerna är desamma som tidigare, men använder nu 'projects' arrayen som fyllts i av API:et)
         function populateYearFilter() {
+            // ... (Koden för populateYearFilter som använder 'projects' arrayen) ...
             const yearFilter = document.getElementById('yearFilter');
             yearFilter.innerHTML = '<option value="">Alla år</option>'; 
             
@@ -397,10 +449,8 @@
             const searchQuery = document.getElementById('searchQuery').value.toLowerCase().trim();
 
             let filteredProjects = projects.filter(project => {
-                // 1. Statusfilter
                 const statusMatch = !statusFilter || project.status.toLowerCase() === statusFilter;
 
-                // 2. År-filter
                 const yearMatch = !yearFilter || (
                     project.datum && project.datum.split('-').length >= 1 && (
                         (project.datum.includes(yearFilter)) || 
@@ -412,11 +462,10 @@
                     )
                 );
 
-                // 3. Fritextsökning
                 const searchMatch = !searchQuery || 
                     project.titel.toLowerCase().includes(searchQuery) ||
-                    project.beskrivning.toLowerCase().includes(searchQuery) ||
-                    project.deltagare.toLowerCase().includes(searchQuery);
+                    (project.beskrivning || '').toLowerCase().includes(searchQuery) ||
+                    (project.deltagare || '').toLowerCase().includes(searchQuery);
 
                 return statusMatch && yearMatch && searchMatch;
             });
@@ -424,7 +473,6 @@
             displayProjects(filteredProjects);
         }
 
-        // Visar projekten i DOM
         function displayProjects(projectsToDisplay) {
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = '';
@@ -440,36 +488,4 @@
                 projectDiv.innerHTML = `
                     <h3>${project.titel}</h3>
                     <p><strong>Status:</strong> ${project.status}</p>
-                    <p><strong>Datum:</strong> ${project.datum}</p>
-                    <p><strong>Deltagare:</strong> ${project.deltagare || 'Ej specificerat'}</p>
-                    <p>${project.beskrivning || ''}</p>
-                    
-                    <div class="card-actions">
-                        <button onclick="editProject('${project.id}')" class="edit-btn">Redigera</button>
-                        <button onclick="deleteProject('${project.id}')" class="delete-btn">Ta bort</button>
-                    </div>
-                `;
-                resultsDiv.appendChild(projectDiv);
-            });
-        }
-
-
-        // =========================================================
-        // 4. Starta applikationen
-        // =========================================================
-
-        document.addEventListener('DOMContentLoaded', () => {
-            populateYearFilter(); 
-            applyFilters(); 
-            
-            document.getElementById('searchQuery').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    applyFilters();
-                }
-            });
-        });
-
-    </script>
-
-</body>
-</html>
+                    <p><strong>Datum:</strong>
